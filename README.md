@@ -37,3 +37,10 @@ AI image generation workspace scaffold. This project uses Hugging Face Diffusers
 - Add notebooks under `notebooks/` for prompt exploration and model comparisons.
 - Integrate custom pipelines (e.g., ControlNet, LoRA) by extending `src/aipict/generate.py`.
 - Automate batch rendering scripts and dataset preparation workflows.
+
+## Phase 1 artifacts
+
+- `scripts/phase1/setup_wsl_rocm.sh` — WSL/ROCm構築チェックリストを出力する手順スクリプト。
+- `docs/xml/stage1-report.xml` — Phase1実施記録（チェックリスト・落とし穴・MCP連携案）。
+- `logs/phase1/torch_device_check_example.log` — `torch`デバイス検証ログの雛形。
+- `tests/phase1/test_stage1.py` — 上記成果物の存在と内容をTDDで担保するpytest。

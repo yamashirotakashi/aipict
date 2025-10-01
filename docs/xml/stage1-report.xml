@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Stage1Report locale="ja-JP" version="1.0">
+  <Summary>
+    <Purpose>WSL上でAMD ROCm対応PyTorchを稼働させる基盤整備。</Purpose>
+    <Date>2024-12-08</Date>
+    <Environment>Windows 11 Pro + WSL2 Ubuntu 24.04 / Ryzen AI Max+ 395 / Radeon 8060S / GPU割当96GB</Environment>
+  </Summary>
+  <Checklist>
+    <Item id="C1">
+      <Task>Windows側でWSLをインストールしGPUパススルーを有効化する。</Task>
+      <SuccessCriteria>PowerShellで `wsl --install -d Ubuntu-24.04` を実行済みで、再起動後に `wsl -l -v` でUbuntuがRunning。</SuccessCriteria>
+      <FailureModes>旧版Windows/WSLでGPUが割り当たらない。修正: Windows Update→再起動→`wsl --update`。</FailureModes>
+    </Item>
+    <Item id="C2">
+      <Task>WSLカーネル更新および基本パッケージを整備する。</Task>
+      <SuccessCriteria>`uname -r` が最新Kernel、`sudo apt update` `sudo apt install` が成功。</SuccessCriteria>
+      <FailureModes>APTミラー不調→`sudo sed -i`でミラー変更、再実行。</FailureModes>
+    </Item>
+    <Item id="C3">
+      <Task>ROCm対応PyTorch仮想環境を構築する。</Task>
+      <SuccessCriteria>`python3 -m venv /opt/ai/venvs/rocm` 作成後、`pip install --index-url https://download.pytorch.org/whl/rocm6.0 torch` が成功。</SuccessCriteria>
+      <FailureModes>GLIBC不足→`sudo apt install libc6`系、`pip install --upgrade pip`。</FailureModes>
+    </Item>
+    <Item id="C4">
+      <Task>torchデバイス検証スクリプトを実行しログを保存する。</Task>
+      <SuccessCriteria>`torch_device_check.log` に `torch:`, `is_hip_available:` 行が出力。</SuccessCriteria>
+      <FailureModes>HIP未対応→`pip list | grep torch`でホイール確認、ROCmバージョン整合を見直す。</FailureModes>
+    </Item>
+  </Checklist>
+  <KnownPitfalls>
+    <Pitfall>
+      <Issue>WSLカーネルが古くGPUパススルー不可。</Issue>
+      <Resolution>`wsl --update` → Windows再起動 → `wsl --shutdown` 後に再試行。</Resolution>
+    </Pitfall>
+    <Pitfall>
+      <Issue>ROCmホイールとWindows側ドライバのバージョン差。</Issue>
+      <Resolution>AMD Adrenalinドライバを最新化し、PyTorch側のrocmタグを合わせる。</Resolution>
+    </Pitfall>
+    <Pitfall>
+      <Issue>大容量VRAM使用時にページング遅延。</Issue>
+      <Resolution>初期ステップ/解像度/CFGを抑制、NVMe空き容量を監視。</Resolution>
+    </Pitfall>
+  </KnownPitfalls>
+  <Logs>
+    <LogFile path="logs/phase1/torch_device_check_example.log" description="torchデバイス検証ログ例" />
+    <LogFile path="/opt/ai/logs/phase1/wsl_rocm_setup_YYYYMMDD_HHMMSS.log" description="実行時のチェックリスト出力" />
+  </Logs>
+  <MCPPlans>
+    <Serena task="Stage1 ChecklistのDAG化" outcome="成功条件と回復手順をTODO化" />
+    <Cipher task="ROCmバージョン固定レビュー" outcome="SBOM案とハッシュ検証提案" />
+    <Zen task="torchテスト失敗時フロー" outcome="WSL/Windows/Driver/venv別If-Thenフロー" />
+  </MCPPlans>
+</Stage1Report>

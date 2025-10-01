@@ -1,0 +1,5 @@
+torch: 2.4.0+rocm6.0
+is_hip_available: True
+cuda.is_available: False
+device_name: AMD Radeon 8060S (ROCm)
+notes: 実行環境によって `cuda.is_available` はFalseで正常。`torch.version.hip` がNoneの場合はROCmホイールを再確認する。
