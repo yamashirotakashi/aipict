@@ -2,7 +2,7 @@
 <Roadmap name="aipict-roadmap" locale="ja-JP" version="1.0">
   <Phase id="1" name="基盤整備 (Weeks 1-2)">
     <Objectives>
-      <Item>WSL 24.04/22.04整備、GPUパススルー検証、ROCm対応PyTorch導入</Item>
+      <Item>WSL 24.04/22.04整備、GPUパススルー検証、DirectML対応PyTorch導入</Item>
       <Item>落とし穴と回復手順のレポート化</Item>
     </Objectives>
     <Deliverables>
@@ -14,7 +14,7 @@
       <Milestone name="torch HIP認識テスト成功" />
     </Milestones>
     <Risks>
-      <Risk>ROCmホイールとドライバの不整合→バージョン固定＆fallback手順</Risk>
+      <Risk>DirectML Runtimeとtorch-directmlの不整合→バージョン固定＆fallback手順</Risk>
     </Risks>
   </Phase>
 

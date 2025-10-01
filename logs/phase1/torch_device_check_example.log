@@ -1,5 +1,4 @@
-torch: 2.4.0+rocm6.0
-is_hip_available: True
-cuda.is_available: False
-device_name: AMD Radeon 8060S (ROCm)
-notes: 実行環境によって `cuda.is_available` はFalseで正常。`torch.version.hip` がNoneの場合はROCmホイールを再確認する。
+torch: 2.4.0+cpu
+directml.device: dml:0
+tensor_device: dml:0
+notes: torch-directml が利用できることを確認。CPUフォールバック時は directml.device が dml:0 とならない。

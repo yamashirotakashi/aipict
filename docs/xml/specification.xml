@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Specification name="aipict" locale="ja-JP" version="1.0">
+<Specification name="aipict" locale="ja-JP" version="2.0">
   <Overview>
-    <Purpose>WSL上におけるAMD GPU(ROCm)対応の生成AI画像制作基盤を構築・運用し、公開モデルとLoRA拡張を安全かつ再現性高く活用できる状態を整備する。</Purpose>
-    <Background>対象マシンは Ryzen™ AI Max+ 395 / Radeon 8060S / 128GB Unified Memory(うちGPU割当96GB)。Windows側でSD.Nextが稼働済みであり、WSL上に本番運用向けのスタックを新規構築する。</Background>
-    <DevelopmentModel>仕様書駆動開発(SDD)とTDDを厳守し、単一責任原則(SRP)を適用する。各成果はGitによるバージョン管理下で追跡する。</DevelopmentModel>
+    <Purpose>現行環境ではROCmが利用できないため、DirectMLを活用したWSL上の生成AI画像制作基盤を構築・運用する。</Purpose>
+    <Background>対象マシンは Ryzen™ AI Max+ 395 / Radeon 8060S / 128GB Unified Memory。Windows側でSD.Nextが検証用途で稼働済みであり、本仕様ではDirectMLバックエンドとPyTorchを組み合わせた運用モデルを定義する。</Background>
+    <DevelopmentModel>仕様書駆動開発(SDD)とTDDを厳守し、単一責任原則(SRP)を適用する。全成果物はGit管理下で追跡し、DirectML構成との整合性を維持する。</DevelopmentModel>
   </Overview>
 
   <Scope>
     <InScope>
-      <Item>WSL上のUbuntu 22.04/24.04におけるROCm対応（PyTorch ROCmホイールを利用）</Item>
-      <Item>ComfyUI / SD.Next / InvokeAI の導入・運用フロー</Item>
-      <Item>モデルおよびLoRAの配置戦略、プリセット運用、キャラクター一貫性確保</Item>
+      <Item>WSL上のUbuntu 22.04/24.04でDirectML対応PyTorch(torch-directml)をセットアップする手順</Item>
+      <Item>ComfyUI / SD.Next / InvokeAI の導入・運用フロー（DirectML環境との互換性確認を含む）</Item>
+      <Item>モデルおよびLoRAの配置戦略、プリセット運用、キャラクター一貫性の確保</Item>
       <Item>LoRA学習データセットの整備（収集、キャプション付与、重複除去、台帳管理）</Item>
-      <Item>CodexCLIとMCPツール（Serena/Cipher/Zen）を活用した運用オーケストレーション</Item>
+      <Item>CodexCLIとMCPツール（Serena/Cipher/Zen）を活用したデータ衛生・自動化プレイブック</Item>
     </InScope>
     <OutOfScope>
-      <Item>Windowsネイティブ側の自動化やSD.Next検証系の継続運用</Item>
-      <Item>クラウドGPU環境の詳細契約と課金処理</Item>
-      <Item>第三者向けのWebサービス展開（API公開、ユーザ管理）</Item>
+      <Item>ROCm・CUDA固有の最適化（DirectMLで代替不能な機能）</Item>
+      <Item>Windowsネイティブ側の自動化およびDirectML以外のアクセラレーション導入</Item>
+      <Item>クラウドGPU契約や課金処理</Item>
     </OutOfScope>
   </Scope>
 
@@ -28,59 +28,59 @@
   </Stakeholders>
 
   <FunctionalRequirements>
-    <Stage id="1" name="WSL+AMD/ROCm調査・導入">
-      <Requirement id="FR-1-1">WindowsとWSLのGPUパススルー状態を検証し、ROCm対応PyTorchでデバイス認識ログを取得する。</Requirement>
-      <Requirement id="FR-1-2">チェックリストの各項目（WSLインストール、WSLアップデート、venv構築、torchテスト）に対して成功/失敗の記録を残す。</Requirement>
-      <Requirement id="FR-1-3">既知の落とし穴と解決策をレポート化し、docs/xml以下に保存する。</Requirement>
+    <Stage id="1" name="WSL+DirectML調査・導入">
+      <Requirement id="FR-1-1">Windows/WSL環境でDirectMLを利用可能とするため、torch-directmlの動作確認ログを取得する。</Requirement>
+      <Requirement id="FR-1-2">チェックリスト（WSLインストール、WSLアップデート、venv構築、torch-directmlテスト）を実行し、成功/失敗を記録する。</Requirement>
+      <Requirement id="FR-1-3">DirectML特有の注意点と回復策をdocs/xml以下にレポート化する。</Requirement>
     </Stage>
-    <Stage id="2" name="ComfyUI/SD.Next/InvokeAI導入">
-      <Requirement id="FR-2-1">3プロジェクト（ComfyUI, SD.Next, InvokeAI）をWSL上に導入し、各UIへブラウザアクセスできるまでを手順化する。</Requirement>
-      <Requirement id="FR-2-2">共通venvと個別追加依存の設計指針を明文化する。</Requirement>
-      <Requirement id="FR-2-3">ポート、モデル配置ディレクトリ、起動パラメータを標準化する。</Requirement>
+    <Stage id="2" name="UI導入">
+      <Requirement id="FR-2-1">ComfyUI, SD.Next, InvokeAIをDirectML互換の共通venv上に導入し、各UIへのブラウザアクセスを確認する。</Requirement>
+      <Requirement id="FR-2-2">共有venvと個別追加依存の設計指針を明文化し、DirectML利用時の制約を追記する。</Requirement>
+      <Requirement id="FR-2-3">ポート、モデル配置ディレクトリ、起動パラメータを標準化し、DirectML環境での既知の制約を記録する。</Requirement>
     </Stage>
     <Stage id="3" name="モデル/LoRA運用">
-      <Requirement id="FR-3-1">ComfyUIにおけるラノベ立ち絵向けワークフローと三面図バッチ生成フローを定義し、再現用プリセット命名規則を策定する。</Requirement>
-      <Requirement id="FR-3-2">各UIでのLoRA合成レンジとSampler設定をプリセットとして保持する。</Requirement>
-      <Requirement id="FR-3-3">キャラクター一貫性ルール（タグ、特徴Key-Value）を策定し、ドキュメント化する。</Requirement>
+      <Requirement id="FR-3-1">ラノベ立ち絵向けワークフローと三面図バッチ生成フローをプリセットとして整備し、DirectML環境での推奨設定を記載する。</Requirement>
+      <Requirement id="FR-3-2">各UIでのLoRA合成レンジとSampler設定をプリセット化し、DirectMLによるパフォーマンス変化をノート化する。</Requirement>
+      <Requirement id="FR-3-3">キャラクター一貫性ルール（タグ、特徴Key-Value）を策定し、文書化する。</Requirement>
     </Stage>
     <Stage id="4" name="LoRA学習データ作成">
-      <Requirement id="FR-4-1">データ台帳（出所・許諾・用途等）をテンプレート化し、ライセンス遵守方針を示す。</Requirement>
-      <Requirement id="FR-4-2">キャプション自動付与、重複除去、train/val分割を品質ゲート付きでワークフロー化する。</Requirement>
-      <Requirement id="FR-4-3">ローカル/クラウド間のデータ同期・学習手順を標準化する。</Requirement>
+      <Requirement id="FR-4-1">データ台帳テンプレートとライセンス遵守方針をDirectML環境向けに調整し、品質ゲートを定義する。</Requirement>
+      <Requirement id="FR-4-2">キャプション自動付与、重複除去、train/val分割を品質ゲート付きでワークフロー化し、DirectML利用時の性能メモを残す。</Requirement>
+      <Requirement id="FR-4-3">ローカル/クラウド間のデータ同期・学習手順を標準化し、DirectMLとクラウドGPUの切り替え指針を記載する。</Requirement>
     </Stage>
-    <Stage id="5" name="データ整備テンプレ">
-      <Requirement id="FR-5-1">画像収集からラベル品質改善までのプレイブックを定義し、再利用可能なコマンドテンプレートを提供する。</Requirement>
-      <Requirement id="FR-5-2">台帳フォーマットの必須カラムと検証ルールを提示する。</Requirement>
+    <Stage id="5" name="データ整備テンプレ展開">
+      <Requirement id="FR-5-1">データ整備プレイブックをCodexCLIで反復実行できるテンプレートとして整備する。</Requirement>
+      <Requirement id="FR-5-2">台帳検証スクリプトとTODO生成ツールを提供し、DirectML運用に必要な品質ゲートを自動化する。</Requirement>
     </Stage>
   </FunctionalRequirements>
 
   <NonFunctionalRequirements>
-    <Requirement id="NFR-1" category="再現性">全工程でバージョン固定・ログ記録・テンプレ化を行い、任意の時点で再構築できる。</Requirement>
-    <Requirement id="NFR-2" category="セキュリティ">ライセンス・著作権・認証情報の管理を厳格化し、秘匿情報は.envで管理する。</Requirement>
-    <Requirement id="NFR-3" category="性能">96GB GPU割当を前提に、各UIで解像度1024px級の生成を安定稼働させる。</Requirement>
-    <Requirement id="NFR-4" category="可観測性">主要スクリプトは実行ログ（成功条件・エラー要因・回復手順）を出力し、トラブル時のZenフローに従う。</Requirement>
-    <Requirement id="NFR-5" category="保守性">コードおよびスクリプトはSRPを遵守し、tdd-firstのテストコードを伴う。ドキュメントはdocs/xml配下に集約する。</Requirement>
+    <Requirement id="NFR-1" category="再現性">DirectML環境構築手順、依存バージョン、ログを固定化し、いつでも再現可能とする。</Requirement>
+    <Requirement id="NFR-2" category="セキュリティ">ライセンス・認証情報を台帳と.envで管理し、DirectML用の追加ドライバ導入記録を保持する。</Requirement>
+    <Requirement id="NFR-3" category="性能">DirectMLバックエンドで1024pxクラスの生成を安定稼働させ、CPUフォールバック時の対処を定義する。</Requirement>
+    <Requirement id="NFR-4" category="可観測性">主要スクリプトはDirectMLテスト結果を含むログを出力し、Zenの復旧フローと連携する。</Requirement>
+    <Requirement id="NFR-5" category="保守性">コードおよびスクリプトはSRPを遵守し、DirectML依存部分を明示する。TDDでテストを付与する。</Requirement>
   </NonFunctionalRequirements>
 
   <Testing>
-    <Strategy>TDDを厳守し、仕様書の各機能要求に対応するテストケースを事前に定義・自動化する。生成物の検証はスナップショット比較、ログ検証、UIへの自動アクセス結果によって担保する。</Strategy>
+    <Strategy>DirectML環境に合わせたテストを定義し、仕様書に対応するテストケースを事前実装する。生成物の検証はスナップショット比較、ログ検証、UIへの自動アクセス結果で担保する。</Strategy>
     <Artifacts>
-      <Item>単体テスト: データ整備スクリプト、モデル配置チェック</Item>
-      <Item>結合テスト: UI起動、ポート疎通、モデル読み込み</Item>
-      <Item>運用テスト: LoRA学習ジョブ、クラウド同期シミュレーション</Item>
+      <Item>単体テスト: DirectMLデバイス検証、台帳検証スクリプト</Item>
+      <Item>結合テスト: UI起動、ポート疎通、プリセット参照チェック</Item>
+      <Item>運用テスト: LoRA学習テンプレートのドライラン、プレイブック自動化</Item>
     </Artifacts>
   </Testing>
 
   <Constraints>
-    <Item>WSLカーネルおよびWindowsビルドは最新であること（GPUパススルー安定化目的）。</Item>
-    <Item>AMD ROCm対応PyTorchのバージョン組合せを固定し、venvごとに隔離する。</Item>
+    <Item>DirectML Runtimeを最新版に維持し、Windows/WSL双方で互換性を確認する。</Item>
+    <Item>torch-directmlとPyTorchホイールのバージョン整合性を記録し、venvごとに隔離する。</Item>
     <Item>ライセンス不明なデータは学習禁止。台帳で許諾状況を証跡化する。</Item>
   </Constraints>
 
   <Deliverables>
-    <Item>WSL構築手順書、起動スクリプト、テンプレート群</Item>
+    <Item>DirectML構築手順書、起動スクリプト、テンプレート群</Item>
     <Item>プリセットおよびワークフローJSON、台帳テンプレート、品質ゲート定義</Item>
-    <Item>LoRA学習パイプライン（ローカル/クラウド両対応）</Item>
+    <Item>LoRA学習プレイブック（ローカルDirectML/クラウドGPU両対応）</Item>
   </Deliverables>
 
   <Approval>

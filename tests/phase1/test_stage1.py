@@ -9,7 +9,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 @pytest.fixture(scope="module")
 def setup_script() -> Path:
-    return PROJECT_ROOT / "scripts" / "phase1" / "setup_wsl_rocm.sh"
+    return PROJECT_ROOT / "scripts" / "phase1" / "setup_wsl_directml.sh"
 
 
 def test_setup_script_exists_and_contains_required_steps(setup_script: Path) -> None:
@@ -19,10 +19,11 @@ def test_setup_script_exists_and_contains_required_steps(setup_script: Path) -> 
         "wsl --install -d",
         "wsl --update",
         "sudo apt update",
-        "python3 -m venv /opt/ai/venvs/rocm",
-        "pip install --index-url https://download.pytorch.org/whl/rocm",
+        "python3 -m venv /opt/ai/venvs/directml",
+        "pip install torch-directml",
         "python - <<'PY'",
         "torch.__version__",
+        "torch_directml",
     ]
     for snippet in required_snippets:
         assert snippet in content, f"setupスクリプトに '{snippet}' が含まれていません"
@@ -58,4 +59,4 @@ def test_stage1_log_template_exists() -> None:
     log_path = PROJECT_ROOT / "logs" / "phase1" / "torch_device_check_example.log"
     assert log_path.exists(), "torchデバイス検証ログテンプレートがありません"
     content = log_path.read_text(encoding="utf-8").strip()
-    assert "torch:" in content and "is_hip_available:" in content, "ログテンプレートに期待するキーがありません"
+    assert "torch:" in content and "directml.device:" in content, "ログテンプレートに期待するキーがありません"

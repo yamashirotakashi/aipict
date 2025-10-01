@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Design name="aipict-design" locale="ja-JP" version="1.0">
   <Architecture>
-    <Overview>AMD GPU(ROCm)対応の生成AI画像基盤を、WSL環境において段階的に構築・運用するためのレイヤードアーキテクチャを採用する。</Overview>
+    <Overview>DirectML対応の生成AI画像基盤を、WSL環境において段階的に構築・運用するためのレイヤードアーキテクチャを採用する。</Overview>
     <Layers>
-      <Layer id="L1" name="Infrastructure Layer" responsibility="WSL/ROCm基盤整備">
+      <Layer id="L1" name="Infrastructure Layer" responsibility="WSL/DirectML基盤整備">
         <Components>
-          <Component name="wsl-bootstrap" responsibility="WSLディストリ導入、カーネル更新、GPUパススルー検証" tests="WSLカーネルバージョン検証テスト、GPUデバイス検出ユニットテスト" />
-          <Component name="rocm-venv" responsibility="ROCm対応PyTorchのvenv構築と依存バージョン固定" tests="pip audit、torchデバイス検証スクリプト" />
+          <Component name="wsl-bootstrap" responsibility="WSLディストリ導入、カーネル更新、DirectML利用可否検証" tests="WSLカーネルバージョン検証テスト、DirectMLデバイス検出" />
+          <Component name="directml-venv" responsibility="torch-directml環境の構築と依存バージョン固定" tests="pip audit、DirectMLデバイス検証スクリプト" />
         </Components>
       </Layer>
       <Layer id="L2" name="Application Deployment Layer" responsibility="UIアプリ群の導入">

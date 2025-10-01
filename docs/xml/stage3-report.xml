@@ -3,7 +3,7 @@
   <Summary>
     <Purpose>ComfyUI/SD.Next/InvokeAIでのモデル・LoRA運用プリセットを整備し、キャラクター一貫性ルールを確立する。</Purpose>
     <Date>2024-12-08</Date>
-    <Dependencies>Phase1/2で構築したWSL+ROCm基盤とUI群。</Dependencies>
+    <Dependencies>Phase1/2で構築したWSL+DirectML基盤とUI群。</Dependencies>
   </Summary>
   <PresetCatalog>
     <Preset id="lightnovel_pose" file="presets/comfyui/lightnovel_workflow.json" ui="ComfyUI" />

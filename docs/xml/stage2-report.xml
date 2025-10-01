@@ -3,7 +3,7 @@
   <Summary>
     <Purpose>ComfyUI / SD.Next / InvokeAI をWSL上で運用できる状態にし、共有venvポリシーとポート標準化を確立する。</Purpose>
     <Date>2024-12-08</Date>
-    <Assumptions>Phase1でROCm対応PyTorchが動作済み、/opt/ai配下の権限が整備済み。</Assumptions>
+    <Assumptions>Phase1でDirectML対応PyTorchが動作済み、/opt/ai配下の権限が整備済み。</Assumptions>
   </Summary>
   <VenvStrategy>
     <Shared>
@@ -12,7 +12,7 @@
     </Shared>
     <PerProject>
       <Description>ComfyUI/SD.Next/InvokeAIで追加依存が衝突する場合は `venvs/{app}` を用意し、runスクリプトで切替える。</Description>
-      <Trigger>requirements.txtのバージョン衝突、ROCm未対応ライブラリ。</Trigger>
+      <Trigger>requirements.txtのバージョン衝突、DirectML未対応ライブラリ。</Trigger>
     </PerProject>
   </VenvStrategy>
   <PortAssignments>
