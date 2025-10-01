@@ -1,0 +1,13 @@
+{
+  "tool": "wd14",
+  "input_dir": "images",
+  "output_dir": "captions",
+  "thresholds": {
+    "min_score": 0.35,
+    "top_k": 75
+  },
+  "postprocess": {
+    "replace": {" ,": ","},
+    "lowercase": false
+  }
+}

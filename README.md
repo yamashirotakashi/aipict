@@ -61,3 +61,12 @@ AI image generation workspace scaffold. This project uses Hugging Face Diffusers
 - `scripts/phase3/sync_presets.sh` — プリセットレジストリに基づくComfyUIプリセット同期。
 - `docs/xml/stage3-report.xml` — プリセットカタログ、キャラクター一貫性ルール、運用手順のレポート。
 - `tests/phase3/test_stage3.py` — Phase3成果物の構造と整合性をTDDで担保するpytest。
+
+## Phase 4 artifacts
+
+- `config/phase4/dataset_ledger.csv` — 許諾・ライセンス・商用可否を管理する台帳テンプレート。
+- `config/phase4/caption_config.json` / `dedup_config.json` — 自動キャプション・重複除去の設定。
+- `datasets/lora_template/` — 画像/キャプション/分割/レポートの標準ディレクトリ構成と品質レポート雛形。
+- `scripts/phase4/generate_captions.py` / `dedup_images.py` / `run_lora_training.sh` — キャプション生成、重複検出、LoRA学習実行テンプレート。
+- `docs/xml/stage4-report.xml` — データ整備と学習フロー、MCP計画をまとめたレポート。
+- `tests/phase4/test_stage4.py` — Phase4成果物の存在と必須設定をチェックするpytest。

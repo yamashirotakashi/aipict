@@ -1,0 +1,6 @@
+{
+  "method": "phash",
+  "max_distance": 6,
+  "image_dir": "images",
+  "output": "reports/duplicates.json"
+}

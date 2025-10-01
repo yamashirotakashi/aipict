@@ -1,0 +1,3 @@
+image_id,source,license,usage,commercial_ok,credit_required,notes
+sample_0001,https://example.com/art1,custom-license,training,true,true,"許諾済み: 作家A"
+sample_0002,https://example.com/art2,cc-by-nc,validation,false,true,"クレジット必須"

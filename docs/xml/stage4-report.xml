@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Stage4Report locale="ja-JP" version="1.0">
+  <Summary>
+    <Purpose>LoRA学習データ作成（ローカル/クラウド）に必要な台帳、キャプション、重複除去、学習テンプレートを整備する。</Purpose>
+    <Date>2024-12-08</Date>
+    <Scope>Phase3までで準備したモデル/プリセットを用い、データ品質ゲートを自動化する。</Scope>
+  </Summary>
+  <DatasetLayout>
+    <Folder name="images" description="元画像を格納" />
+    <Folder name="captions" description="画像ごとのキャプションtxt" />
+    <Folder name="splits" description="train/valのリスト" />
+    <Folder name="reports" description="品質レポートや重複検出結果" />
+  </DatasetLayout>
+  <Captioning>
+    <Tool name="wd14" />
+    <Config path="config/phase4/caption_config.json" />
+    <QualityGate>スコア閾値0.35未満は除外、top_k=75でタグを抽出。</QualityGate>
+  </Captioning>
+  <Deduplication>
+    <Method>imagededup (PHash)</Method>
+    <Config path="config/phase4/dedup_config.json" />
+    <QualityGate>max_distance=6以内の重複をreports/duplicates.jsonに出力。</QualityGate>
+  </Deduplication>
+  <Training>
+    <Local>
+      <Command>bash scripts/phase4/run_lora_training.sh --dataset datasets/lora_project</Command>
+      <Log>outputs/lora/train.log</Log>
+    </Local>
+    <Cloud>
+      <Strategy>rsyncで datasets/ と models/ をクラウドVMへ同期。環境変数 `LORA_REMOTE_HOST` を利用。</Strategy>
+      <Command>./scripts/phase4/run_lora_training.sh --dataset /mnt/lora_project --remote</Command>
+    </Cloud>
+  </Training>
+  <MCPPlans>
+    <Serena task="データ整備DAG化" outcome="収集→台帳→キャプション→重複→学習をTODO化" />
+    <Cipher task="ライセンス・個人情報検証" outcome="台帳CSVを解析し欠落列を検出するスクリプト提案" />
+    <Zen task="学習失敗時フロー" outcome="学習率・バッチ・解像度・精度を順に緩和する手順" />
+  </MCPPlans>
+</Stage4Report>
