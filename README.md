@@ -44,3 +44,11 @@ AI image generation workspace scaffold. This project uses Hugging Face Diffusers
 - `docs/xml/stage1-report.xml` — Phase1実施記録（チェックリスト・落とし穴・MCP連携案）。
 - `logs/phase1/torch_device_check_example.log` — `torch`デバイス検証ログの雛形。
 - `tests/phase1/test_stage1.py` — 上記成果物の存在と内容をTDDで担保するpytest。
+
+## Phase 2 artifacts
+
+- `scripts/phase2/setup_shared_venv.sh` — UI群の共通venv構築スクリプト。
+- `scripts/phase2/install_comfyui.sh` / `install_sdnext.sh` / `install_invokeai.sh` — 各UI導入と起動ラッパー生成スクリプト。
+- `config/phase2/service_ports.json` — 標準ポート定義（ComfyUI:8188 / SD.Next:7860 / InvokeAI:9090）。
+- `docs/xml/stage2-report.xml` — venv戦略、ポート標準化、モデル配置規約をまとめたレポート。
+- `tests/phase2/test_stage2.py` — Phase2成果物の存在と主要要件を検証するpytest。

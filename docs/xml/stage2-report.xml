@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Stage2Report locale="ja-JP" version="1.0">
+  <Summary>
+    <Purpose>ComfyUI / SD.Next / InvokeAI をWSL上で運用できる状態にし、共有venvポリシーとポート標準化を確立する。</Purpose>
+    <Date>2024-12-08</Date>
+    <Assumptions>Phase1でROCm対応PyTorchが動作済み、/opt/ai配下の権限が整備済み。</Assumptions>
+  </Summary>
+  <VenvStrategy>
+    <Shared>
+      <Description>/opt/ai/venvs/base に共通依存を集約し、パッチ適用やpip upgradeを一元管理する。</Description>
+      <Benefits>容量節約、バージョン固定、メンテナンス容易化。</Benefits>
+    </Shared>
+    <PerProject>
+      <Description>ComfyUI/SD.Next/InvokeAIで追加依存が衝突する場合は `venvs/{app}` を用意し、runスクリプトで切替える。</Description>
+      <Trigger>requirements.txtのバージョン衝突、ROCm未対応ライブラリ。</Trigger>
+    </PerProject>
+  </VenvStrategy>
+  <PortAssignments>
+    <Service name="ComfyUI" port="8188" />
+    <Service name="SDNext" port="7860" />
+    <Service name="InvokeAI" port="9090" />
+    <Notes>全サービス listen=0.0.0.0、ファイアウォールとトンネル設定はSerenaのTODOで管理。</Notes>
+  </PortAssignments>
+  <ModelDirectories>
+    <Entry app="ComfyUI" type="checkpoints" path="/opt/ai/ComfyUI/models/checkpoints" />
+    <Entry app="ComfyUI" type="loras" path="/opt/ai/ComfyUI/models/loras" />
+    <Entry app="ComfyUI" type="vae" path="/opt/ai/ComfyUI/models/vae" />
+    <Entry app="SDNext" type="checkpoints" path="/opt/ai/sdnext/models/Stable-diffusion" />
+    <Entry app="SDNext" type="loras" path="/opt/ai/sdnext/models/Lora" />
+    <Entry app="InvokeAI" type="checkpoints" path="~/.invokeai/models/checkpoints" />
+    <Entry app="InvokeAI" type="loras" path="~/.invokeai/models/loras" />
+  </ModelDirectories>
+  <MCPPlans>
+    <Serena task="3アプリインストールDAG化" outcome="共有venv→各リポclone→依存導入→起動検証をタスク化" />
+    <Cipher task="requirementsピン留めとSBOM生成" outcome="`pip freeze`を収集しハッシュ検証スクリプトを提案" />
+    <Zen task="起動失敗時トラブルシュート" outcome="ポート衝突/VRAM不足/モデル未配置のIf-Then分岐" />
+  </MCPPlans>
+</Stage2Report>

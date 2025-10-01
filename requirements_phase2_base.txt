@@ -1,0 +1,5 @@
+# Phase2 common dependencies for UI deployments
+fastapi>=0.111.0
+uvicorn>=0.30.0
+numpy>=1.26.0
+pillow>=10.2.0
