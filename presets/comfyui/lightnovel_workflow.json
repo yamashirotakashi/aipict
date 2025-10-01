@@ -1,0 +1,19 @@
+{
+  "name": "lightnovel_pose",
+  "prompt": "char:Shirayuki_Aoi, light novel key visual, full body, dynamic pose, volumetric rim light",
+  "negative_prompt": "blurry, low quality, deformed, extra limbs, watermark",
+  "loras": [
+    {"name": "ShirayukiAoi_character_v1", "weight": 0.7},
+    {"name": "LN_illustration_style", "weight": 0.35}
+  ],
+  "sampler": "dpmpp_2m_karras",
+  "steps": 24,
+  "cfg": 6.0,
+  "resolution": "1024x1024",
+  "seed_mode": "random",
+  "view": "hero",
+  "notes": {
+    "description": "ラノベ立ち絵用。まずはLoRA weightを低めに設定し、CFGやstepsを段階的に増やす。",
+    "workflow": "ComfyUI graph template: comfyui/flows/lightnovel_pose.json"
+  }
+}

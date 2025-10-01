@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Stage3Report locale="ja-JP" version="1.0">
+  <Summary>
+    <Purpose>ComfyUI/SD.Next/InvokeAIでのモデル・LoRA運用プリセットを整備し、キャラクター一貫性ルールを確立する。</Purpose>
+    <Date>2024-12-08</Date>
+    <Dependencies>Phase1/2で構築したWSL+ROCm基盤とUI群。</Dependencies>
+  </Summary>
+  <PresetCatalog>
+    <Preset id="lightnovel_pose" file="presets/comfyui/lightnovel_workflow.json" ui="ComfyUI" />
+    <Preset id="turnaround_batch" file="presets/comfyui/turnaround_workflow.json" ui="ComfyUI" />
+  </PresetCatalog>
+  <CharacterConsistency>
+    <TagPrefix>すべてのプロンプト先頭にキャラIDタグ（例: char:Shirayuki_Aoi）を付与する。</TagPrefix>
+    <KeyValue>髪・瞳・衣装・身長・年齢域などの特徴をKey-Value化し、prompt_prefixへ統合する。</KeyValue>
+    <NegativeTags>ネガティブプロンプトに禁止事項（例: monster limbs, armor）を含め一致性を高める。</NegativeTags>
+    <SeedPolicy>三面図プリセットはseed固定で整合性を保持し、立ち絵は初期探索で乱数を利用。</SeedPolicy>
+  </CharacterConsistency>
+  <Operations>
+    <Workflow name="lightnovel_pose">
+      <Step>LoRA weightを0.5前後から試行し、CFG 5.5-6.5を中心に調整。</Step>
+      <Step>ComfyUI graph `comfyui/flows/lightnovel_pose.json` を基礎に、背景差し替えノードを追加。</Step>
+    </Workflow>
+    <Workflow name="turnaround_batch">
+      <Step>同一seedでfront/side/backを生成し、差分検証をノートに記録。</Step>
+      <Step>ビューごとの追加プロンプトを`view_prompts`で管理し、タグ辞書と同期する。</Step>
+    </Workflow>
+  </Operations>
+  <MCPPlans>
+    <Serena task="プリセット更新タスクのDAG化" outcome="lightnovel→turnaround→SDNextプリセット拡張を自動TODO化" />
+    <Cipher task="モデル/LoRAハッシュ記録" outcome="SBOMにモデルファイルのSHA256を追加する提案" />
+    <Zen task="生成ブレ調整フロー" outcome="LoRA weight→CFG→steps→sampler→seedの順に調整する標準手順を提示" />
+  </MCPPlans>
+</Stage3Report>

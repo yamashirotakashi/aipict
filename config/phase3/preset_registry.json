@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "presets": [
+    {
+      "id": "lightnovel_pose",
+      "file": "lightnovel_workflow.json",
+      "ui": "ComfyUI",
+      "description": "ラノベ立ち絵プリセット"
+    },
+    {
+      "id": "turnaround_batch",
+      "file": "turnaround_workflow.json",
+      "ui": "ComfyUI",
+      "description": "三面図バッチプリセット"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "turnaround_batch",
+  "prompt": "char:Shirayuki_Aoi, turnaround sheet, orthographic reference, neutral lighting",
+  "negative_prompt": "background props, dramatic lighting, motion blur",
+  "loras": [
+    {"name": "ShirayukiAoi_character_v1", "weight": 0.65},
+    {"name": "uniform_clean_base", "weight": 0.25}
+  ],
+  "sampler": "dpmpp_2m_karras",
+  "steps": 22,
+  "cfg": 5.5,
+  "resolution": "1024x1024",
+  "seed_mode": "fixed",
+  "seed": 777,
+  "views": ["front", "side", "back"],
+  "view_prompts": {
+    "front": "front view, hands relaxed, symmetric pose",
+    "side": "profile view, shoulders aligned, neutral pose",
+    "back": "back view, aligned posture"
+  },
+  "notes": {
+    "description": "正面/側面/背面の三面図を同シードで生成して整合性を確保する。",
+    "workflow": "ComfyUI graph template: comfyui/flows/turnaround_sheet.json"
+  }
+}

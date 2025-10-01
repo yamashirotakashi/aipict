@@ -1,0 +1,19 @@
+{
+  "characters": {
+    "char:Shirayuki_Aoi": {
+      "prompt_prefix": "char:Shirayuki_Aoi, cheerful heroine, academy uniform",
+      "attributes": {
+        "hair": "long silver hair with blue gradient tips",
+        "eyes": "emerald green eyes",
+        "costume": "white and navy academy uniform with ribbon",
+        "age": "late teens",
+        "height": "160cm"
+      },
+      "negatives": [
+        "monster limbs",
+        "armor",
+        "heavy makeup"
+      ]
+    }
+  }
+}

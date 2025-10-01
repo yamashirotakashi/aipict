@@ -52,3 +52,12 @@ AI image generation workspace scaffold. This project uses Hugging Face Diffusers
 - `config/phase2/service_ports.json` — 標準ポート定義（ComfyUI:8188 / SD.Next:7860 / InvokeAI:9090）。
 - `docs/xml/stage2-report.xml` — venv戦略、ポート標準化、モデル配置規約をまとめたレポート。
 - `tests/phase2/test_stage2.py` — Phase2成果物の存在と主要要件を検証するpytest。
+
+## Phase 3 artifacts
+
+- `presets/comfyui/lightnovel_workflow.json` / `turnaround_workflow.json` — ラノベ立ち絵・三面図プリセット定義。
+- `config/phase3/preset_registry.json` / `character_tags.json` — プリセット参照とキャラクタータグ辞書。
+- `scripts/phase3/check_character_prompt.py` — キャラ用プロンプトのタグ整合検証ツール。
+- `scripts/phase3/sync_presets.sh` — プリセットレジストリに基づくComfyUIプリセット同期。
+- `docs/xml/stage3-report.xml` — プリセットカタログ、キャラクター一貫性ルール、運用手順のレポート。
+- `tests/phase3/test_stage3.py` — Phase3成果物の構造と整合性をTDDで担保するpytest。
