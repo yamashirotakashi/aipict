@@ -1,0 +1,23 @@
+{
+  "required_columns": [
+    "image_id",
+    "source",
+    "license",
+    "usage",
+    "commercial_ok",
+    "credit_required",
+    "notes",
+    "personal_data"
+  ],
+  "validators": {
+    "license": ["custom-license", "cc-by", "cc-by-nc", "commission", "public-domain"],
+    "usage": ["training", "validation", "test"],
+    "commercial_ok": ["true", "false"],
+    "credit_required": ["true", "false"],
+    "personal_data": ["true", "false"]
+  },
+  "severity": {
+    "missing_required": "critical",
+    "invalid_value": "high"
+  }
+}

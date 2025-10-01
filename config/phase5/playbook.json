@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "steps": [
+    {
+      "id": "collect_images",
+      "description": "画像収集とメタ台帳登録",
+      "command": "codex run --agent Serena --task '画像収集TODOをDAG化し成功条件を列挙'"
+    },
+    {
+      "id": "normalize",
+      "description": "解像度正規化とフォーマット統一",
+      "command": "python scripts/phase5/generate_todo.py --step normalize"
+    },
+    {
+      "id": "auto_caption",
+      "description": "自動キャプション生成 (WD14/DeepDanbooru)",
+      "command": "python scripts/phase4/generate_captions.py"
+    },
+    {
+      "id": "deduplicate",
+      "description": "imagededupによる重複検出",
+      "command": "python scripts/phase4/dedup_images.py"
+    },
+    {
+      "id": "split_and_report",
+      "description": "train/val分割と品質レポート更新",
+      "command": "codex run --agent Zen --task '分割結果と品質ゲートを確認し逸脱を報告'"
+    }
+  ]
+}

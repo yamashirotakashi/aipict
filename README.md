@@ -70,3 +70,11 @@ AI image generation workspace scaffold. This project uses Hugging Face Diffusers
 - `scripts/phase4/generate_captions.py` / `dedup_images.py` / `run_lora_training.sh` — キャプション生成、重複検出、LoRA学習実行テンプレート。
 - `docs/xml/stage4-report.xml` — データ整備と学習フロー、MCP計画をまとめたレポート。
 - `tests/phase4/test_stage4.py` — Phase4成果物の存在と必須設定をチェックするpytest。
+
+## Phase 5 artifacts
+
+- `config/phase5/playbook.json` — データ整備プレイブック（collect→normalize→caption→dedup→split）。
+- `config/phase5/ledger_rules.json` — 台帳の必須カラムと許可値、重大度定義。
+- `scripts/phase5/data_hygiene_playbook.sh` / `generate_todo.py` / `validate_ledger.py` — MCP連携、TODO生成、台帳検証テンプレート。
+- `docs/xml/stage5-report.xml` — プレイブック、オートメーション、検証指針、MCP計画のまとめ。
+- `tests/phase5/test_stage5.py` — Phase5成果物の構造と自動化を担保するpytest。

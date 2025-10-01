@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Stage5Report locale="ja-JP" version="1.0">
+  <Summary>
+    <Purpose>データ整備テンプレ（キャプション/重複/台帳）を自動化し、品質ゲートを運用可能にする。</Purpose>
+    <Date>2024-12-08</Date>
+    <Scope>Codex CLIとMCPエージェントを活用した反復実行テンプレートの提供。</Scope>
+  </Summary>
+  <Playbook>
+    <Step id="collect_images" description="画像収集と台帳登録" />
+    <Step id="normalize" description="解像度正規化・拡張子統一" />
+    <Step id="auto_caption" description="WD14/DeepDanbooruでタグ付与" />
+    <Step id="deduplicate" description="imagededupで重複除去" />
+    <Step id="split_and_report" description="train/val分割と品質レポート更新" />
+  </Playbook>
+  <Automation>
+    <Tool name="Serena" action="プレイブックDAG生成とTODO配信" />
+    <Tool name="Cipher" action="台帳CSVのライセンス/個人情報検証" />
+    <Tool name="Zen" action="品質ゲート失敗時のトラブルシュート指示" />
+    <Tool name="CodexCLI" action="scripts/phase5/data_hygiene_playbook.sh の実行" />
+  </Automation>
+  <Validation>
+    <LedgerCheck>scripts/phase5/validate_ledger.py で必須カラム欠落・不正値を検出し、重大度を出力。</LedgerCheck>
+    <CaptionQuality>scripts/phase4/generate_captions.py の出力タグ数・閾値を品質レポートに記録。</CaptionQuality>
+    <DedupReport>reports/duplicates.json を解析し、重複率が閾値超過時にアラート。</DedupReport>
+  </Validation>
+  <MCPPlans>
+    <Serena task="Playbookタスク自動生成" outcome="collect→normalize→caption→dedup→split の進捗監視" />
+    <Cipher task="台帳検証スクリプトレビュー" outcome="ライセンス/個人情報/透かし検査を強化" />
+    <Zen task="品質問題復旧手順" outcome="タグ精度低下→しきい値調整→手動補正→再実行" />
+  </MCPPlans>
+</Stage5Report>
