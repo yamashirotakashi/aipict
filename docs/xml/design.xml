@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Design name="aipict-design" locale="ja-JP" version="1.0">
+  <Architecture>
+    <Overview>AMD GPU(ROCm)対応の生成AI画像基盤を、WSL環境において段階的に構築・運用するためのレイヤードアーキテクチャを採用する。</Overview>
+    <Layers>
+      <Layer id="L1" name="Infrastructure Layer" responsibility="WSL/ROCm基盤整備">
+        <Components>
+          <Component name="wsl-bootstrap" responsibility="WSLディストリ導入、カーネル更新、GPUパススルー検証" tests="WSLカーネルバージョン検証テスト、GPUデバイス検出ユニットテスト" />
+          <Component name="rocm-venv" responsibility="ROCm対応PyTorchのvenv構築と依存バージョン固定" tests="pip audit、torchデバイス検証スクリプト" />
+        </Components>
+      </Layer>
+      <Layer id="L2" name="Application Deployment Layer" responsibility="UIアプリ群の導入">
+        <Components>
+          <Component name="comfyui-installer" responsibility="ComfyUIリポジトリ管理、依存導入、起動スクリプト生成" tests="サービス起動モックテスト、ポート疎通テスト" />
+          <Component name="sdnext-installer" responsibility="SD.Nextクローン、依存管理、推奨起動パラメータ適用" tests="依存検証テスト、UI起動ヘルスチェック" />
+          <Component name="invokeai-installer" responsibility="InvokeAI CLIセットアップ、設定ファイルテンプレ生成" tests="対話設定モック、webポート確認" />
+        </Components>
+      </Layer>
+      <Layer id="L3" name="Operation Layer" responsibility="モデル/LoRA運用規約確立">
+        <Components>
+          <Component name="preset-manager" responsibility="UI別プリセットの命名・保存・同期" tests="プリセットファイル検証、命名規則チェック" />
+          <Component name="character-guard" responsibility="キャラクター一貫性タグ/属性の検証" tests="タグ必須チェック、Key-Value整合性テスト" />
+        </Components>
+      </Layer>
+      <Layer id="L4" name="Dataset Layer" responsibility="LoRA学習データ管理">
+        <Components>
+          <Component name="data-ledger" responsibility="台帳テンプレート生成、許諾情報検証" tests="必須カラム検証テスト" />
+          <Component name="caption-pipeline" responsibility="キャプション自動付与スクリプト、品質ゲート" tests="キャプション生成モック、閾値検証" />
+          <Component name="dedup-engine" responsibility="画像重複検知と除去リスト生成" tests="pHash差分テスト、重複検出境界テスト" />
+          <Component name="training-workflow" responsibility="LoRA学習パラメータテンプレ、ローカル/クラウド同期" tests="CLI引数検証、ドライランテスト" />
+        </Components>
+      </Layer>
+      <Layer id="L5" name="Playbook Layer" responsibility="データ整備テンプレートの再利用">
+        <Components>
+          <Component name="hygiene-playbook" responsibility="収集→正規化→タグ付→重複除去→分割のプロセス定義" tests="プレイブック整合性テスト" />
+        </Components>
+      </Layer>
+    </Layers>
+  </Architecture>
+
+  <Principles>
+    <Item>仕様書駆動開発: SpecificationのFR/NFRを追跡し、各コンポーネントが仕様に対応することをTraceability Matrixで管理する。</Item>
+    <Item>テスト駆動開発(TDD): すべてのスクリプト・テンプレートはFailするテストを先に実装し、Red-Green-Refactorのサイクルを必須とする。</Item>
+    <Item>単一責任原則: 各コンポーネントは1つの責務に限定し、再利用可能な小さなモジュールとして構築する。</Item>
+  </Principles>
+
+  <Modules>
+    <Module name="cli-tools" responsibility="CodexCLIからの操作コマンド集" tests="コマンドテンプレ単体テスト" />
+    <Module name="docs" responsibility="仕様・設計・ロードマップ管理" tests="XML Schemaバリデーション、リンク整合性" />
+    <Module name="scripts" responsibility="インストール・データ整備自動化" tests="ユニット + 結合テスト" />
+  </Modules>
+
+  <DataFlow>
+    <Flow id="DF-1" description="モデル/LoRA配置とUIの連携">
+      <Step order="1">preset-managerがモデルディレクトリを検証</Step>
+      <Step order="2">UI起動スクリプトがディレクトリを参照し、存在確認テストを実施</Step>
+      <Step order="3">character-guardが生成ログを収集し、タグ整合性を分析</Step>
+    </Flow>
+    <Flow id="DF-2" description="LoRAデータ整備">
+      <Step order="1">data-ledgerが台帳CSVを生成し、許諾情報を入力</Step>
+      <Step order="2">caption-pipelineが自動タグ付けを実行、品質ゲートで閾値未満を除外</Step>
+      <Step order="3">dedup-engineが重複検出し、除外リストを生成</Step>
+      <Step order="4">training-workflowがtrain/val分割および学習ジョブ構築</Step>
+    </Flow>
+  </DataFlow>
+
+  <Interfaces>
+    <Interface name="MCP-Serena" type="agent" purpose="タスクDAG生成とTODO管理" />
+    <Interface name="MCP-Cipher" type="agent" purpose="セキュリティ/再現性レビュー" />
+    <Interface name="MCP-Zen" type="agent" purpose="トラブルシュートフロー提供" />
+    <Interface name="GitHub" type="scm" purpose=" yamashirotakashi/aipict リポジトリへのバージョン管理" />
+  </Interfaces>
+
+  <TestingStrategy>
+    <UnitTests>
+      <Item>依存チェック、ディレクトリ検証、設定ファイル生成をpytestで自動化</Item>
+      <Item>データ台帳・キャプション生成のバリデーションをデータ駆動テストで実施</Item>
+    </UnitTests>
+    <IntegrationTests>
+      <Item>UI起動スクリプトに対するポート疎通チェックをpytest + requestsで自動化</Item>
+      <Item>LoRA学習ワークフローのドライランをCI内で再現し、ログをアサート</Item>
+    </IntegrationTests>
+    <CI>
+      <Item>GitHub ActionsでWSL互換コンテナを利用し、TDDで定義されたテストスイートを自動実行</Item>
+    </CI>
+  </TestingStrategy>
+
+  <Traceability>
+    <Mapping>
+      <Map requirement="FR-1-1" component="wsl-bootstrap" test="test_gpu_passthrough.py::test_device_visible" />
+      <Map requirement="FR-2-1" component="comfyui-installer" test="test_comfyui_launch.py::test_launch" />
+      <Map requirement="FR-3-1" component="preset-manager" test="test_presets.py::test_lightnovel_workflow" />
+      <Map requirement="FR-4-1" component="data-ledger" test="test_ledger_schema.py::test_required_columns" />
+      <Map requirement="FR-5-1" component="hygiene-playbook" test="test_playbook.py::test_sequence_valid" />
+    </Mapping>
+  </Traceability>
+</Design>

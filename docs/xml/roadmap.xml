@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Roadmap name="aipict-roadmap" locale="ja-JP" version="1.0">
+  <Phase id="1" name="基盤整備 (Weeks 1-2)">
+    <Objectives>
+      <Item>WSL 24.04/22.04整備、GPUパススルー検証、ROCm対応PyTorch導入</Item>
+      <Item>落とし穴と回復手順のレポート化</Item>
+    </Objectives>
+    <Deliverables>
+      <Item>WSLセットアップスクリプト</Item>
+      <Item>torchデバイス検証ログ</Item>
+    </Deliverables>
+    <Milestones>
+      <Milestone name="WSLカーネル更新完了" />
+      <Milestone name="torch HIP認識テスト成功" />
+    </Milestones>
+    <Risks>
+      <Risk>ROCmホイールとドライバの不整合→バージョン固定＆fallback手順</Risk>
+    </Risks>
+  </Phase>
+
+  <Phase id="2" name="UI導入 (Weeks 3-4)">
+    <Objectives>
+      <Item>ComfyUI/SD.Next/InvokeAI を共通venv上に導入</Item>
+      <Item>サービス起動スクリプトとポート監視の自動化</Item>
+    </Objectives>
+    <Deliverables>
+      <Item>各UIの起動手順と設定テンプレ</Item>
+      <Item>ポート疎通テスト</Item>
+    </Deliverables>
+    <Milestones>
+      <Milestone name="ComfyUI初回起動" />
+      <Milestone name="InvokeAIプリセット生成" />
+    </Milestones>
+    <Risks>
+      <Risk>依存衝突→venv分割とrequirementsピン留め</Risk>
+    </Risks>
+  </Phase>
+
+  <Phase id="3" name="運用プリセット整備 (Weeks 5-6)">
+    <Objectives>
+      <Item>ラノベ立ち絵/三面図プリセットをComfyUIで確立</Item>
+      <Item>各UIのLoRA合成レンジとSamplerをプリセット化</Item>
+      <Item>キャラクター一貫性ルールのドキュメント化</Item>
+    </Objectives>
+    <Deliverables>
+      <Item>プリセットJSON/設定ファイル</Item>
+      <Item>キャラクタータグ辞書</Item>
+    </Deliverables>
+    <Milestones>
+      <Milestone name="プリセット生成テスト合格" />
+    </Milestones>
+    <Risks>
+      <Risk>生成品質のばらつき→Zenフローによる調整順序の適用</Risk>
+    </Risks>
+  </Phase>
+
+  <Phase id="4" name="LoRAデータ整備・学習 (Weeks 7-9)">
+    <Objectives>
+      <Item>データ台帳テンプレ整備とライセンス確認ワークフロー構築</Item>
+      <Item>キャプション自動化・重複除去・train/val分割の品質ゲート設定</Item>
+      <Item>ローカル/クラウド連携を含むLoRA学習テンプレの完成</Item>
+    </Objectives>
+    <Deliverables>
+      <Item>台帳テンプレCSV/JSON</Item>
+      <Item>LoRA学習スクリプトとドライランログ</Item>
+    </Deliverables>
+    <Milestones>
+      <Milestone name="データ品質ゲート通過" />
+      <Milestone name="LoRA初回学習完了" />
+    </Milestones>
+    <Risks>
+      <Risk>学習失敗→Zen復旧フローチャート適用</Risk>
+    </Risks>
+  </Phase>
+
+  <Phase id="5" name="データ衛生テンプレ展開 (Weeks 10-11)">
+    <Objectives>
+      <Item>データ整備プレイブックの自動化テンプレを公開</Item>
+      <Item>台帳検証ルールとレポート生成を自動化</Item>
+    </Objectives>
+    <Deliverables>
+      <Item>CodexCLI用コマンドテンプレ</Item>
+      <Item>台帳バリデーションスクリプト</Item>
+    </Deliverables>
+    <Milestones>
+      <Milestone name="プレイブック自動化検証成功" />
+    </Milestones>
+    <Risks>
+      <Risk>データラベル品質低下→品質改善順序の適用</Risk>
+    </Risks>
+  </Phase>
+</Roadmap>
